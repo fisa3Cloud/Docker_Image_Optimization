@@ -78,6 +78,7 @@ FROM eclipse-temurin:21-jre-alpine
 
 **빌드 및 이미지 크기 변화**
 <p align="left"><img src="https://github.com/user-attachments/assets/11956879-b62c-45f1-a278-5bc316dc29e3"></p>
+이미지 크기가 589mb 에서 277mb 로 감소하였습니다.
 
 <br>
 
@@ -106,7 +107,8 @@ ENTRYPOINT ["java","-jar","/app/spring-boot-application.jar"]
   <p align="left"><img src="https://github.com/user-attachments/assets/5dbd9426-2928-49e7-b17b-d4654c617c66"></p>
 - **이미지 크기**: 88MB
  <p align="left"><img src="https://github.com/user-attachments/assets/6908b95b-0080-4bf7-8275-3e90233ed49a"></p>
-- **코드 수정 후 빌드 시간**: 2.5s
+ 
+ - **코드 수정 후 빌드 시간**: 2.5s
   : 멀티스테이지에서 코드를 변경한 후에 빌드한 결과입니다.
   <p align="left"><img src="https://github.com/user-attachments/assets/5d3e9fe7-2429-4168-9ed3-9b794f2318af"></p>
 
@@ -114,7 +116,13 @@ ENTRYPOINT ["java","-jar","/app/spring-boot-application.jar"]
 
 **빌드 및 이미지 크기 변화**
 <p align="left"><img src="https://github.com/user-attachments/assets/c7024965-6fad-4551-a6ff-550a007d9b24"></p>
+빌드 속도가 14.2s-> 22.s-> 8.6s로 감소하였습니다. 
+<br>
 
+
+### **❓ 멀티 스테이지 빌드 시 처음에 시간이 더 걸리는 이유?**
+
+멀티 스테이지 빌드는 초기에는 이미지 레이어 생성, 캐시 미사용, 복잡한 빌드 프로세스 등으로 시간이 더 걸릴 수 있습니다. 하지만 **최종 이미지 크기 감소**, **보안 강화**, **구조화된 빌드 프로세스** 등의 장점을 제공하며, **빌드 캐시 최적화**, **.dockerignore 사용**, **경량 베이스 이미지 활용** 등을 통해 성능을 개선할 수 있습니다. 결과적으로, 초기 시간 증가는 있지만 장기적으로 **개발 및 배포 효율성**을 높이는 방법입니다.
 
 <br>
 
@@ -155,6 +163,7 @@ ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
 
 **빌드 및 이미지 크기 변화**
 <p align="left"><img src="https://github.com/user-attachments/assets/7b9cbeef-6265-40c3-b2aa-2b99ae2a8d70"></p>
+
 
 <br>
 
