@@ -1,6 +1,5 @@
-# <p> 🐳🔨 How to Docker Image Optimization 
-""
-
+# <p> 🐳 Spring Boot Docker 이미지 최적화 
+"스프링 부트 기반 채팅 서버의 **도커라이즈 및 성능 개선**"
 
 <br>
 
@@ -15,50 +14,140 @@
 
 ## 📌 개요
 
-Docker image를 최적화하는 것은 효율적인 리소스 활용, 더 빠른 배포 및 향상된 보안에 필수적이다.
+이 프로젝트는 Docker 이미지를 최적화하여 **빌드 시간 단축과 이미지 크기 감소**를 목표로 진행되었습니다. **다양한 최적화 기법을 적용**하여 배포 과정의 효율성을 극대화하고, 최종적으로 더 가볍고 빠른 이미지를 생성했습니다.
 
 <br>
 
 ## 🎖️ 주요 기능
 
-### 1. **저장 공간 절약**
-
-- 최적화된 이미지는 불필요한 파일과 레이어를 줄여 저장 공간을 절약한다. 이는 이미지 다운로드 및 배포 속도를 향상시킨다.
-
-### 2. **성능 향상**
-
-- 이미지 크기를 줄이면 컨테이너 시작 시간이 빨라진다. 적은 수의 레이어와 작은 이미지 크기는 실행 속도를 향상시킨다.
-
-### 3. **네트워크 대역폭 절약**
-
-- 최적화된 이미지는 push와 pull 시 전송되는 데이터 양을 줄여 네트워크 대역폭을 절약시킬 수 있고 이것은 CI/CD 파이프라인에서 특히 중요하다.
-
-### 4. **보안 강화**
-
-- 불필요한 패키지와 파일을 제거함으로써 공격 가능한 표면을 줄이고, 보안 취약점을 최소화할 수 있다. 또한, 최신 버전의 패키지만을 포함하여 보안 업데이트를 적용해서 안전한 배포가 가능하다.
-
-### 5. **유지 관리 용이**
-
-- 최적화된 이미지는 불필요한 복잡성을 줄여 관리가 용이해진다. 간결한 Dockerfile은 유지보수를 더 쉽게 하고, 팀원 간의 협업을 촉진한다.
-
-### 6. **이식성 향상**
-
-- 경량화된 이미지는 다양한 환경에서 더 쉽게 실행되며, 여러 클라우드 서비스나 로컬 개발 환경에 걸쳐 이식성이 높아진다.
-
-### 7. **이미지 레지스트리 효율성**
-
-- 많은 이미지가 저장되는 레지스트리에서 최적화된 이미지는 전체 시스템의 효율성을 높이고, 이미지 검색 및 관리를 더 빠르고 효율적으로 만들어준다.
+1. **이미지 크기 감소**
+   - 무겁고 불필요한 파일을 제거하여 최종 이미지 크기를 최소화하였습니다.
+3. **빌드 시간 단축**
+   - 최적화된 빌드 프로세스를 통해 빠른 개발 및 배포가 가능합니다.
+4. **최적화된 캐시 사용**
+   - 멀티 스테이지 빌드와 캐시 전략을 활용하여 반복적인 빌드에서 성능이 개선됩니다.
+5. **보안 강화**
+   - 불필요한 빌드 단계와 파일을 제거함으로써 보안도 함께 강화하였습니다.
 
 <br>
 
+## 📊 프로젝트 과정
+**Docker 이미지 최적화**를 목표로, 다양한 최적화 방법들을 적용해보고 성능을 측정하여 최적의 결과를 도출했습니다.
 
-## 🧐 기대 효과
+### 1️⃣ 최초 빌드
+기본적으로 `openjdk:21` 이미지를 사용하여 Spring Boot 애플리케이션을 배포합니다. 초기 이미지의 빌드 시간과 크기는 다음과 같습니다.
+
+#### Dockerfile
+```dockerfile
+FROM openjdk:21
+
+RUN mkdir -p deploy
+WORKDIR /deploy
+
+COPY ./build/libs/chat-server-0.0.1-SNAPSHOT.jar chat-server.jar
+
+ENTRYPOINT ["java","-jar","/deploy/chat-server.jar"]
+
+```
+
+- **빌드 시간**: 14.2s
+  사진
+- **이미지 크기**: 289MB
+  사진
+
+### 2️⃣ 경량 JDK 이미지로 변경
+
+기존 `openjdk:21` 이미지는 전체 JDK를 포함하고 있어 크기가 큽니다. **JRE**만 필요한 경우, 더 작은 이미지를 사용해 최적화할 수 있습니다.
+
+#### Dockerfile
+```dockerfile
+FROM eclipse-temurin:21-jre-alpine
+```
+
+- **변경 후 빌드 시간**: 7.0s
+사진
+  
+- **변경 후 이미지 크기**: 89MB
+사진
 
 
+### 3️⃣ 멀티 스테이지 빌드 도입
+
+빌드 단계와 실행 단계를 분리하여 빌드 성능을 최적화하고 불필요한 파일을 제거할 수 있습니다.
+
+#### Dockerfile
+```dockerfile
+
+# 빌드 스테이지
+FROM gradle:7.2.0-jdk17 AS build
+COPY --chown=gradle:gradle . /home/gradle/src
+WORKDIR /home/gradle/srcRUN gradle build --no-daemon
+
+# 실행 스테이지
+FROM eclipse-temurin:21-jre-alpine
+EXPOSE 8080RUN mkdir /app
+COPY --from=build /home/gradle/src/build/libs/*.jar /app/spring-boot-application.jar
+ENTRYPOINT ["java","-jar","/app/spring-boot-application.jar"]
+
+```
+
+- **스테이지 적용 직후 빌드 시간**: 22.3s
+  : prune으로 이전 데이터들을 다 날리고 동일한 조건 하에서 스테이지 적용 후 도커 파일을 실행하였습니다.
+  
+- **이미지 크기**: 88MB
+- **코드 수정 후 빌드 시간**: 2.5s
+  : 멀티스테이지에서 코드를 변경한 후에 빌드한 결과입니다.
+
+
+### 4️⃣ 스프링 부트 레이어드 JAR 사용
+
+스프링 부트의 **레이어드 JAR** 기능을 사용하여 애플리케이션의 빌드 성능을 더욱 최적화할 수 있습니다. 이 방식은 애플리케이션을 여러 레이어로 나누어 캐싱할 수 있게 해줍니다.
+
+#### Dockerfile
+```dockerfile
+# 빌드 스테이지
+FROM eclipse-temurin:21-jre-alpine as builder
+WORKDIR application
+ARG JAR_FILE=build/libs/*.jar
+COPY ${JAR_FILE} application.jar
+RUN java -Djarmode=layertools -jar application.jar extract
+
+# 실행 스테이지
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR application
+COPY --from=builder application/dependencies/ ./
+COPY --from=builder application/spring-boot-loader/ ./
+COPY --from=builder application/snapshot-dependencies/ ./
+COPY --from=builder application/application/ ./
+ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
+```
+
+
+- **레이어드 적용 직후 빌드 시간**: 8.6s
+  prune으로 기존 데이터를 모두 날린 후 진행하였으며, 레이어드를 적용한 직후 빌드한 화면입니다.
+- **이미지 크기**: 88MB
+- **코드 수정 후 빌드 시간**: 0.8s
+  레이어드를 적용한 상태에서 코드를 수정하고 다시 빌드한 화면입니다.
+
+
+<br>
+
+## 🧐 결론 및 기대효과
+
+이번 프로젝트를 통해 Docker 이미지 크기를 최적화하는 과정에서 멀티 스테이지 빌드, 이미지 변경, 레이어드 JAR 방식을 도입하여 빌드 시간을 **14.2초에서 0.8초**로 대폭 줄일 수 있었습니다. 
+
+특히, 멀티 스테이지 빌드를 활용하여 불필요한 파일과 패키지를 배제하고 경량 베이스 이미지를 선택함으로써 이미지 크기와 빌드 시간이 획기적으로 감소했습니다. 결과적으로 배포 과정이 더 효율적이고 빠르게 이루어졌으며, 리소스 사용량 또한 최적화되었습니다.
+
+### 기대효과
+- **비용 절감**: 이미지 크기 감소로 인한 저장 공간과 전송 비용 절감
+- **빠른 배포**: 짧은 빌드 시간으로 인해 개발 주기 단축
+- **유지보수 용이**: 구조화된 Dockerfile로 코드 변경 시 효율적인 관리 가능
+- **보안 강화**: 불필요한 종속성 제거로 보안 취약점 최소화
 
 <br>
 
 ## 🤔 아쉬웠던 점
-
+- **.dockerignore 파일**: 로그 파일이나 기타 불필요한 파일을 빌드에서 제외하기 위해 .dockerignore 파일을 시도해 보았으나, 현재 프로젝트에서 로그나 기타 불필요한 파일들이 많지 않아서 크리티컬한 영향을 미치지 않았습니다. 따라서 최종 빌드에서는 제외했지만, 향후 로그가 많아질 경우 적용을 고려할 필요가 있습니다.
+- **초기 빌드 시간**: 멀티 스테이지 빌드를 적용함으로써 처음 빌드 시간은 다소 길어졌습니다. 그러나 최적화된 캐시 전략을 통해 반복적인 빌드에서 큰 효과를 기대할 수 있습니다.
 
 <br>
