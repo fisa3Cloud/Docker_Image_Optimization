@@ -34,6 +34,8 @@
 ## 📊 프로젝트 과정
 **Docker 이미지 최적화**를 목표로, 다양한 최적화 방법들을 적용해보고 성능을 측정하여 최적의 결과를 도출했습니다.
 
+<br>
+
 ### 1️⃣ 최초 빌드
 기본적으로 `openjdk:21` 이미지를 사용하여 Spring Boot 애플리케이션을 배포합니다. 초기 이미지의 빌드 시간과 크기는 다음과 같습니다.
 
@@ -51,9 +53,11 @@ ENTRYPOINT ["java","-jar","/deploy/chat-server.jar"]
 ```
 
 - **빌드 시간**: 14.2s
-  사진
+  <p align="left"><img src="https://github.com/user-attachments/assets/673819c3-bc00-4ea1-933d-b8d9efaa5187"></p>
 - **이미지 크기**: 289MB
-  사진
+  <p align="left"><img src="https://github.com/user-attachments/assets/7b0c879f-285d-4509-bb87-39eefc3fe8ea"></p>
+
+<br>
 
 ### 2️⃣ 경량 JDK 이미지로 변경
 
@@ -65,11 +69,17 @@ FROM eclipse-temurin:21-jre-alpine
 ```
 
 - **변경 후 빌드 시간**: 7.0s
-사진
+<p align="left"><img src="https://github.com/user-attachments/assets/8633a31b-e0b5-478c-ad07-13c699615669"></p>
   
 - **변경 후 이미지 크기**: 89MB
-사진
+<p align="left"><img src="https://github.com/user-attachments/assets/e4180cf6-125a-458c-b5c8-5c24569a4eff"></p>
 
+<br>
+
+**빌드 및 이미지 크기 변화**
+<p align="left"><img src="https://github.com/user-attachments/assets/11956879-b62c-45f1-a278-5bc316dc29e3"></p>
+
+<br>
 
 ### 3️⃣ 멀티 스테이지 빌드 도입
 
@@ -91,13 +101,22 @@ ENTRYPOINT ["java","-jar","/app/spring-boot-application.jar"]
 
 ```
 
-- **스테이지 적용 직후 빌드 시간**: 22.3s
-  : prune으로 이전 데이터들을 다 날리고 동일한 조건 하에서 스테이지 적용 후 도커 파일을 실행하였습니다.
-  
+- **스테이지 적용 직후 빌드 시간**: 22.3s <br>
+  prune으로 이전 데이터들을 다 날리고 동일한 조건 하에서 스테이지 적용 후 도커 파일을 실행하였습니다.
+  <p align="left"><img src="https://github.com/user-attachments/assets/5dbd9426-2928-49e7-b17b-d4654c617c66"></p>
 - **이미지 크기**: 88MB
+ <p align="left"><img src="https://github.com/user-attachments/assets/6908b95b-0080-4bf7-8275-3e90233ed49a"></p>
 - **코드 수정 후 빌드 시간**: 2.5s
   : 멀티스테이지에서 코드를 변경한 후에 빌드한 결과입니다.
+  <p align="left"><img src="https://github.com/user-attachments/assets/5d3e9fe7-2429-4168-9ed3-9b794f2318af"></p>
 
+<br>
+
+**빌드 및 이미지 크기 변화**
+<p align="left"><img src="https://github.com/user-attachments/assets/c7024965-6fad-4551-a6ff-550a007d9b24"></p>
+
+
+<br>
 
 ### 4️⃣ 스프링 부트 레이어드 JAR 사용
 
@@ -125,10 +144,17 @@ ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
 
 - **레이어드 적용 직후 빌드 시간**: 8.6s
   prune으로 기존 데이터를 모두 날린 후 진행하였으며, 레이어드를 적용한 직후 빌드한 화면입니다.
+  <p align="left"><img src="https://github.com/user-attachments/assets/94ea760d-8387-4a01-a217-443f427457b9"></p>
 - **이미지 크기**: 88MB
+  <p align="left"><img src="https://github.com/user-attachments/assets/60b97b54-cf32-4196-948d-73307d560377"></p>
 - **코드 수정 후 빌드 시간**: 0.8s
   레이어드를 적용한 상태에서 코드를 수정하고 다시 빌드한 화면입니다.
+  <p align="left"><img src="https://github.com/user-attachments/assets/a9ccc166-040c-4a15-bc62-e3d6a8d72602"></p>
 
+<br>
+
+**빌드 및 이미지 크기 변화**
+<p align="left"><img src="https://github.com/user-attachments/assets/7b9cbeef-6265-40c3-b2aa-2b99ae2a8d70"></p>
 
 <br>
 
@@ -138,7 +164,7 @@ ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
 
 특히, 멀티 스테이지 빌드를 활용하여 불필요한 파일과 패키지를 배제하고 경량 베이스 이미지를 선택함으로써 이미지 크기와 빌드 시간이 획기적으로 감소했습니다. 결과적으로 배포 과정이 더 효율적이고 빠르게 이루어졌으며, 리소스 사용량 또한 최적화되었습니다.
 
-### 기대효과
+#### 기대효과
 - **비용 절감**: 이미지 크기 감소로 인한 저장 공간과 전송 비용 절감
 - **빠른 배포**: 짧은 빌드 시간으로 인해 개발 주기 단축
 - **유지보수 용이**: 구조화된 Dockerfile로 코드 변경 시 효율적인 관리 가능
