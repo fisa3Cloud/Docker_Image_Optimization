@@ -78,12 +78,12 @@ FROM eclipse-temurin:21-jre-alpine
 <br>
 
 **이미지 크기 변화**
-<p align="left"><img src="https://github.com/user-attachments/assets/11956879-b62c-45f1-a278-5bc316dc29e3"></p>
+<p align="left"><img src="https://github.com/user-attachments/assets/9dc25064-b055-4eac-897f-a9249f0aa7a8"></p>
 이미지 크기가 589mb 에서 277mb 로 약 53% 감소하였습니다.
 
 **빌드 속도 변화**
 빌드 속도가 14.2s 에서 7.0s로 약 50% 감소하였습니다.
-
+<p align="left"><img src="https://github.com/user-attachments/assets/a61b14f0-54ad-437b-b09c-7a0bbf948b65"></p>
 
 <br>
 <br>
@@ -127,7 +127,7 @@ ENTRYPOINT ["java","-jar","/app/spring-boot-application.jar"]
 <br>
 
 **빌드 및 이미지 크기 변화**
-<p align="left"><img src="https://github.com/user-attachments/assets/c7024965-6fad-4551-a6ff-550a007d9b24"></p>
+<p align="left"><img src="https://github.com/user-attachments/assets/de2acf8b-ffa7-40ec-ba54-f70e96a906a0"></p>
 빌드 속도가 14.2s-> 22.s-> 8.6s로 감소하였습니다. 
 <br>
 
@@ -182,7 +182,7 @@ ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
 <br>
 
 **빌드 및 이미지 크기 변화**
-<p align="left"><img src="https://github.com/user-attachments/assets/7b9cbeef-6265-40c3-b2aa-2b99ae2a8d70"></p>
+<p align="left"><img src="https://github.com/user-attachments/assets/7fd36b11-1c2b-4cf0-b1d6-4b8ff44fe480"></p>
 빌드속도가 2.5s -> 0.8s로 줄어들었습니다. 
 
 <br>
