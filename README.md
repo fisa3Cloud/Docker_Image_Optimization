@@ -1,5 +1,8 @@
 # <p> 🐳 Spring Boot Docker 이미지 최적화 
-"스프링 부트 기반 채팅 서버의 **도커라이즈 및 성능 개선**"
+"스프링 부트 기반 채팅 서버의 **도커라이즈 및 성능 개선**" <br>
+<br>
+내용 정리 : 
+https://lean-pine-7b9.notion.site/Docker-Image-Optimization-389bcc3c6ffa4f5891fd9bd67f80c5d4?pvs=4
 
 <br>
 
@@ -81,9 +84,12 @@ FROM eclipse-temurin:21-jre-alpine
 <p align="left"><img src="https://github.com/user-attachments/assets/9dc25064-b055-4eac-897f-a9249f0aa7a8"></p>
 이미지 크기가 589mb 에서 277mb 로 약 53% 감소하였습니다.
 
-**빌드 속도 변화**
-빌드 속도가 14.2s 에서 7.0s로 약 50% 감소하였습니다.
+<br>
+<br>
+
+**빌드 속도 변화** <br>
 <p align="left"><img src="https://github.com/user-attachments/assets/a61b14f0-54ad-437b-b09c-7a0bbf948b65"></p>
+빌드 속도가 14.2s 에서 7.0s로 약 50% 감소하였습니다.
 
 <br>
 <br>
